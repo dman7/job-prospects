@@ -1,7 +1,16 @@
-// $(document).ready(
-// {
+// A file that contains the necessary API processing.
 
-// });
+var requestAuth = function()
+{
+	if(IN.User.isAuthorized())
+	{
+		loadJobs();
+	}
+	else
+	{
+		IN.User.authorize(loadJobs);
+	}
+}
 
 var loadJobs = function()
 {
@@ -9,6 +18,7 @@ var loadJobs = function()
 	$("#field-of-study-div").show("slow");
 	$("#job-prospects-div").show("slow");
 
+	// Extract the user's major.
 	IN.API.Profile("me").fields(["educations:(field-of-study)"]).result(function(result)
 	{
 		// For some reason, some user educations are empty; let's filter them out.
@@ -20,9 +30,9 @@ var loadJobs = function()
 
 		// Pass this on to extract your 'friend's' headlines.
 		jobOpportunities(field_of_study)
-
-	})
+	})	
 };
+
 
 
 var get_field_of_study = function(user_educations)
@@ -39,10 +49,8 @@ var jobOpportunities = function(field_of_study)
 {
 
 	IN.API.PeopleSearch().result(function(result) { 
-
 		// We extract the total so we can calculate the number of batches we have to fetch.
 		var total = result.people._total;
-
 		num_batches = Math.floor(total / 25) + 1
 
 		// For each batch, extract the users and their headlines.
@@ -51,7 +59,6 @@ var jobOpportunities = function(field_of_study)
 			IN.API.PeopleSearch().fields(["first-name", "last-name", "headline", "educations:(field-of-study)"]).params({"start": 25*i, "count":25}).result(function(result)
 			{
 				users = result.people.values;
-			
 				for (var j = 0; j < users.length; j++)
 				{
 					user_educations = users[j].educations.values;
@@ -64,12 +71,5 @@ var jobOpportunities = function(field_of_study)
 				}
 			});
 		}
-	
-
-
-		
-
-
 	});
-
 }
