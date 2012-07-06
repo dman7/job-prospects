@@ -2,14 +2,8 @@
 
 var requestAuth = function()
 {
-	if(IN.User.isAuthorized())
-	{
-		loadJobs();
-	}
-	else
-	{
-		IN.User.authorize(loadJobs);
-	}
+	if(IN.User.isAuthorized()) { loadJobs(); }
+	else { IN.User.authorize(loadJobs); }
 }
 
 var loadJobs = function()
@@ -47,7 +41,6 @@ var get_field_of_study = function(user_educations)
 
 var jobOpportunities = function(field_of_study)
 {
-
 	IN.API.PeopleSearch().result(function(result) { 
 		// We extract the total so we can calculate the number of batches we have to fetch.
 		var total = result.people._total;
